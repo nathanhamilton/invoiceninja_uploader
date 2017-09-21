@@ -1,0 +1,15 @@
+const dotenv = require('dotenv')
+dotenv.config({silent: true})
+
+var config = {
+  INVOICE_NINJA_API_KEY: process.env.INVOICE_NINJA_API_KEY,
+  INVOICE_NINJA_API_URL: process.env.INVOICE_NINJA_API_URL,
+  INVOICE_NINJA_DB_HOST: process.env.INVOICE_NINJA_DB_HOST,
+  INVOICE_NINJA_DATABASE: process.env.INVOICE_NINJA_DATABASE,
+  INVOICE_NINJA_USERNAME: process.env.INVOICE_NINJA_USERNAME,
+  INVOICE_NINJA_PASSWORD: process.env.INVOICE_NINJA_PASSWORD,
+  INVOICE_NINJA_LOGGING: process.env.INVOICE_NINJA_LOGGING,
+  INVOICE_NINJA_PORT: process.env.INVOICE_NINJA_PORT
+}
+
+export default config

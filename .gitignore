@@ -1,0 +1,8 @@
+.idea/
+node_modules/
+.env
+.babelrc
+.DS_Store
+*.csv
+*.log
+
