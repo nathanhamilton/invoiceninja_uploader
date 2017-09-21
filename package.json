@@ -1,0 +1,25 @@
+{
+  "name": "@nathanhamilton/invoiceninja_uploader",
+  "version": "1.0.0",
+  "description": "This is an application developed to migrate data to invoice ninja from a CSV file through the Invoice Ninja API.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nathanhamilton/invoiceninja_uploader.git"
+  },
+  "keywords": [
+    "Invoice",
+    "Ninja",
+    "CSV",
+    "Uploader"
+  ],
+  "author": "Nathan Hamilton",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nathanhamilton/invoiceninja_uploader/issues"
+  },
+  "homepage": "https://github.com/nathanhamilton/invoiceninja_uploader#readme"
+}
