@@ -1,10 +1,11 @@
 import config from '../config'
+import fs from 'fs'
 var request = require('request'),
   throttledRequest = require('throttled-request')(request);
 
 throttledRequest.configure({
-  requests: 5,
-  milliseconds: 1000
+  requests: 1,
+  milliseconds: 200
 })
 
 class InvoiceNinja {
@@ -26,8 +27,7 @@ class InvoiceNinja {
       if (body === undefined || res.statusCode === undefined) return callback(null, '')
       if (res.statusCode !== 200 || err) {
         console.log(`Error found in looking up client with uid ${uidToReference}, the error returned was: ${err}`)
-        console.dir(body)
-        console.dir(res)
+        console.log(`Body of the request: ${body}`)
         callback(err, null)
       } else {
         callback(null, body)
@@ -36,6 +36,7 @@ class InvoiceNinja {
   }
 
   createInvoice (jsonInvoice, callback) {
+    var self = this
     let options = {
       uri: `${config.INVOICE_NINJA_API_URL}/api/v1/invoices`,
       method: 'POST',
@@ -48,10 +49,10 @@ class InvoiceNinja {
 
     throttledRequest(options, function(err, res, body) {
 
-      if (body === undefined || res.statusCode === undefined) return callback(null, '')
-      if (res.statusCode !== 200 || err) {
+      if (res.statusCode !== 200 || res.statusCode == 'undefined') {
         console.log(`Invoice was not created for ${jsonInvoice}`)
         console.log(`Body of the request: ${body}`)
+        self.logIssues(options, err, res)
       } else {
         console.log('Invoice was successfully created.')
       }
@@ -59,6 +60,7 @@ class InvoiceNinja {
   }
 
   createPayment (jsonPayment, callback) {
+    var self = this
     let options = {
       uri: `${config.INVOICE_NINJA_API_URL}/api/v1/payments`,
       method: 'POST',
@@ -69,22 +71,19 @@ class InvoiceNinja {
       }
     }
 
-    console.log(options)
-
     throttledRequest(options, function(err, res, body) {
-      console.log(body)
 
-      if (body === undefined || res.statusCode === undefined) return callback(null, '')
-      if (res.statusCode !== 200 || err) {
-        console.log(`Payment was not created for ${jsonInvoice}`)
+      if (res.statusCode !== 200 || res.statusCode == 'undefined') {
+        console.log(`Payment was not created for ${jsonPayment}`)
         console.log(`Body of the request: ${body}`)
+        self.logIssues(options, err, res)
       } else {
         console.log('Payment successfully created.')
       }
     })
   }
 
-  createPayment (jsonRefund, callback) {
+  createRefund (jsonRefund, callback) {
     let options = {
       uri: `${config.INVOICE_NINJA_API_URL}/api/v1/payments`,
       method: 'POST',
@@ -95,19 +94,25 @@ class InvoiceNinja {
       }
     }
 
-    console.log(options)
-
     throttledRequest(options, function(err, res, body) {
-      console.log(body)
 
-      if (body === undefined || res.statusCode === undefined) return callback(null, '')
-      if (res.statusCode !== 200 || err) {
-        console.log(`Payment was not created for ${jsonInvoice}`)
+      if (res.statusCode !== 200 || res.statusCode == 'undefined') {
+        console.log(`Payment was not created for ${jsonRefund}`)
         console.log(`Body of the request: ${body}`)
+        this.logIssues(options, err, res)
       } else {
-        console.log('Payment successfully created.')
+        console.log('Refund successfully created.')
       }
     })
+  }
+
+  logIssues (requestOptions, err, res = null ) {
+    var message = {
+      request: requestOptions,
+      error: err
+    }
+
+    fs.writeFileSync('../../api.log', message, 'utf-8')
   }
 }
 

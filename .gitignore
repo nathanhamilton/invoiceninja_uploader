@@ -4,5 +4,5 @@ node_modules/
 .babelrc
 .DS_Store
 *.csv
+npm-debug.log
 *.log
-

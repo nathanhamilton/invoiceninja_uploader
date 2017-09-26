@@ -1,12 +1,12 @@
 
 class Transformer {
 
-  createInvoice (data, clientId) {
+  createInvoice (data) {
 
     var source = {
       amount: data.total,
       balance: data.total,
-      client_id: clientId,
+      client_id: data.client_public_id,
       invoice_status_id: 2,
       discount: 0,
       invoice_date: data.created_at,
@@ -44,24 +44,26 @@ class Transformer {
     return publicNotes
   }
 
-  createRefund (data, invoiceId) {
+  createRefund (data) {
+    const CREDIT_CARD_OTHER = 13
     var source = {
       amount: -Math.abs(data.amount),
-      invoice_id: invoiceId,
-      payment_date: data.created_at,
+      invoice_id: data.invoice_public_id,
+      payment_date: data.settled_at,
       private_notes: data.reason + '\r\nBraintree Account: Collegeplus1',
+      payment_type_id: CREDIT_CARD_OTHER,
       transaction_reference: data.transaction_id
     }
     return JSON.stringify(source)
   }
 
-  createPayment (data, invoiceId) {
+  createPayment (data) {
     const CREDIT_CARD_OTHER = 13
     var source = {
       amount: data.amount,
-      invoice_id: invoiceId,
+      invoice_id: data.invoice_public_id,
       payment_type_id: CREDIT_CARD_OTHER,
-      payment_date: data.created_at,
+      payment_date: data.settled_at,
       private_notes: 'Braintree Account: Collegeplus1',
       transaction_reference: data.transaction_id
     }

@@ -10,11 +10,8 @@ class CSVConverter {
     fs.createReadStream(pathToInvoiceFile)
       .pipe(csvParse({separator: ','}))
       .on('data', function(data) {
-        ninja.getClientByUid(data.student_uid, function(err, body) {
-          var clientBody = JSON.parse(body).data[0]
-          var convertInvoice = transformer.createInvoice(data, clientBody.id)
-          ninja.createInvoice(convertInvoice)
-        })
+        var convertInvoice = transformer.createInvoice(data)
+        ninja.createInvoice(convertInvoice)
       })
   }
 
@@ -22,15 +19,8 @@ class CSVConverter {
     fs.createReadStream(pathToPaymentsFile)
       .pipe(csvParse({separator: ','}))
       .on('data', function(data) {
-        var customId = data.db_id
-        mysqlHandler.findInvoiceByCustomId(customId, function(err, invoice) {
-          if (err) {
-            console.log(err)
-          } else {
-            var createPayment = transformer.createPayment(data, invoice.public_id)
-            ninja.createPayment(createPayment)
-          }
-        })
+        var createPayment = transformer.createPayment(data)
+        ninja.createPayment(createPayment)
       })
   }
 
@@ -38,15 +28,8 @@ class CSVConverter {
     fs.createReadStream(pathToRefundsFile)
       .pipe(csvParse({separator: ','}))
       .on('data', function(data) {
-        var customId = data.db_id
-        mysqlHandler.findInvoiceByCustomId(customId, function(err, invoice) {
-          if (err) {
-            console.log(err)
-          } else {
-            var createRefund = transformer.createRefund(data, invoice.public_id)
-            ninja.createRefund(createRefund)
-          }
-        })
+        var createRefund = transformer.createRefund(data)
+        ninja.createRefund(createRefund)
       })
   }
 
