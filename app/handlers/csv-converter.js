@@ -6,6 +6,15 @@ import mysqlHandler from './mysql-handler'
 
 class CSVConverter {
 
+  createClients (pathToInvoiceFile) {
+    fs.createReadStream(pathToInvoiceFile)
+      .pipe(csvParse({separator: ','}))
+      .on('data', function(data) {
+        var createClient = transformer.createClient(data)
+        ninja.createClient(createClient)
+      })
+  }
+
   convertInvoices (pathToInvoiceFile) {
     fs.createReadStream(pathToInvoiceFile)
       .pipe(csvParse({separator: ','}))

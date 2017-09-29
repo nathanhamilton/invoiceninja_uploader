@@ -1,6 +1,32 @@
 
 class Transformer {
 
+
+  createClient (data) {
+    var fullName = `${data.first_name} ${data.last_name}`
+    var source = {
+      name: fullName,
+      address1: data.address_1,
+      address2: data.address_2,
+      city: data.city,
+      state: data.state,
+      country: data.country,
+      postal_code: data.zipcode,
+      id_number: data.uid,
+      custom_value1: data.custom_value_client1,
+      custom_value2: data.custom_value_client2,
+      contact: {
+        first_name: data.first_name,
+        last_name: data.last_name,
+        email: data.email,
+        phone: data.phone_number,
+        custom_value1: data.custom_value_contact1,
+        custom_value2: data.custom_value_contact2
+      }
+    }
+    return JSON.stringify(source)
+  }
+
   createInvoice (data) {
 
     var source = {
@@ -18,7 +44,7 @@ class Transformer {
       is_amount_discount: true,
       auto_bill: false,
       has_expenses: false,
-      custom_text_value1: '',
+      custom_text_value1: data.chargify_id,
       custom_text_value2: data.db_id,
       is_public: true,
       invoice_items: [

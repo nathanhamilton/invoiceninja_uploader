@@ -12,7 +12,7 @@ prompt.get(['upload_type'], function (err, result) {
     console.log(result.upload_type + 'Great, where is the file located?')
     prompt.get(['file_location'], function (err, result) {
       console.log(result.file_location)
-      // csvconverter.convertInvoices(result.file_location)
+      csvconverter.createClients(result.file_location)
     })
   } else if (result.upload_type == 'invoices') {
     console.log(result.upload_type + 'Great, where is the file located?')

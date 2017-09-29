@@ -35,6 +35,30 @@ class InvoiceNinja {
     })
   }
 
+  createClient (jsonClient, callback) {
+    var self = this
+    let options = {
+      uri: `${config.INVOICE_NINJA_API_URL}/api/v1/clients`,
+      method: 'POST',
+      body: jsonClient,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Ninja-Token': config.INVOICE_NINJA_API_KEY
+      }
+    }
+
+    throttledRequest(options, function(err, res, body) {
+
+      if (res.statusCode !== 200 || res.statusCode == 'undefined') {
+        console.log(`Client was not created for ${jsonInvoice}`)
+        console.log(`Body of the request: ${body}`)
+        self.logIssues(options, err, res)
+      } else {
+        console.log('Client was successfully created.')
+      }
+    })
+  }
+
   createInvoice (jsonInvoice, callback) {
     var self = this
     let options = {
