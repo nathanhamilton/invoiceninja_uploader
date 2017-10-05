@@ -5,7 +5,7 @@ var request = require('request'),
 
 throttledRequest.configure({
   requests: 1,
-  milliseconds: 200
+  milliseconds: 300
 })
 
 class InvoiceNinja {
@@ -50,7 +50,7 @@ class InvoiceNinja {
     throttledRequest(options, function(err, res, body) {
 
       if (res.statusCode !== 200 || res.statusCode == 'undefined') {
-        console.log(`Client was not created for ${jsonInvoice}`)
+        console.log(`Client was not created for ${jsonClient}`)
         console.log(`Body of the request: ${body}`)
         self.logIssues(options, err, res)
       } else {
@@ -108,6 +108,7 @@ class InvoiceNinja {
   }
 
   createRefund (jsonRefund, callback) {
+    var self = this
     let options = {
       uri: `${config.INVOICE_NINJA_API_URL}/api/v1/payments`,
       method: 'POST',
@@ -123,9 +124,103 @@ class InvoiceNinja {
       if (res.statusCode !== 200 || res.statusCode == 'undefined') {
         console.log(`Payment was not created for ${jsonRefund}`)
         console.log(`Body of the request: ${body}`)
-        this.logIssues(options, err, res)
+        self.logIssues(options, err, res)
       } else {
         console.log('Refund successfully created.')
+      }
+    })
+  }
+
+  createCheck (jsonCheck, callback) {
+    var self = this
+    let options = {
+      uri: `${config.INVOICE_NINJA_API_URL}/api/v1/payments`,
+      method: 'POST',
+      body: jsonCheck,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Ninja-Token': config.INVOICE_NINJA_API_KEY
+      }
+    }
+
+    throttledRequest(options, function(err, res, body) {
+
+      if (res.statusCode !== 200 || res.statusCode == 'undefined') {
+        console.log(`Check was not created for ${jsonCheck}`)
+        console.log(`Body of the request: ${body}`)
+        self.logIssues(options, err, res)
+      } else {
+        console.log('Check successfully created.')
+      }
+    })
+  }
+
+  createCredit (jsonCredit, callback) {
+    var self = this
+    let options = {
+      uri: `${config.INVOICE_NINJA_API_URL}/api/v1/credits`,
+      method: 'POST',
+      body: jsonCredit,
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Ninja-Token': config.INVOICE_NINJA_API_KEY
+      }
+    }
+
+    throttledRequest(options, function(err, res, body) {
+
+      if (res.statusCode !== 200 || res.statusCode == 'undefined') {
+        console.log(`Credit was not created for ${jsonCredit}`)
+        console.log(`Body of the request: ${body}`)
+        self.logIssues(options, err, res)
+      } else {
+        console.log('Credit successfully created.')
+      }
+    })
+  }
+
+  deletePayment (paymentPublicId, callback) {
+    var self = this
+    let options = {
+      uri: `${config.INVOICE_NINJA_API_URL}/api/v1/payments/${paymentPublicId}`,
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Ninja-Token': config.INVOICE_NINJA_API_KEY
+      }
+    }
+
+    throttledRequest(options, function(err, res, body) {
+
+      if (res.statusCode !== 200 || res.statusCode == 'undefined') {
+        console.log(`Credit was not created for ${paymentPublicId}`)
+        console.log(`Body of the request: ${body}`)
+        self.logIssues(options, err, res)
+      } else {
+        console.log(`Payment ${paymentPublicId} was successfully deleted`)
+      }
+    })
+  }
+
+  deleteCredit (creditPublicId, callback) {
+    var self = this
+    let options = {
+      uri: `${config.INVOICE_NINJA_API_URL}/api/v1/credits/${creditPublicId}`,
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Ninja-Token': config.INVOICE_NINJA_API_KEY
+      }
+    }
+
+    throttledRequest(options, function(err, res, body) {
+
+      if (res.statusCode !== 200 || res.statusCode == 'undefined') {
+        console.log(`Credit was not created for ${creditPublicId}`)
+        console.log(`Body of the request: ${body}`)
+        self.logIssues(options, err, res)
+      } else {
+        console.log(`Credit ${creditPublicId} was successfully deleted`)
       }
     })
   }

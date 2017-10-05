@@ -42,6 +42,48 @@ class CSVConverter {
       })
   }
 
+  convertChecks (pathToChecksFile) {
+    fs.createReadStream(pathToChecksFile)
+    .pipe(csvParse({separator: ','}))
+    .on('data', function(data) {
+      var createCheck = transformer.createCheck(data)
+      ninja.createCheck(createCheck)
+    })
+  }
+
+  convertCredits (pathToCreditsFile) {
+    fs.createReadStream(pathToCreditsFile)
+    .pipe(csvParse({separator: ','}))
+    .on('data', function(data) {
+      var credit = transformer.createCredit(data)
+      ninja.createCredit(credit)
+    })
+  }
+
+  convertCreditPayments (pathToCreditPaymentsFile) {
+    fs.createReadStream(pathToCreditPaymentsFile)
+    .pipe(csvParse({separator: ','}))
+    .on('data', function(data) {
+      var creditPayment = transformer.createCreditPayment(data)
+      ninja.createPayment(creditPayment)
+    })
+  }
+
+  deletePayments (pathToPaymentsFile) {
+    fs.createReadStream(pathToPaymentsFile)
+    .pipe(csvParse({separator: ','}))
+    .on('data', function(data) {
+      ninja.deletePayment(data.id)
+    })
+  }
+
+  deleteCredits (pathToCreditsFile) {
+    fs.createReadStream(pathToCreditsFile)
+    .pipe(csvParse({separator: ','}))
+    .on('data', function(data) {
+      ninja.deleteCredit(data.id)
+    })
+  }
 }
 
 export default new CSVConverter()

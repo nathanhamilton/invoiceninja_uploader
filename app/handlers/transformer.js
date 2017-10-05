@@ -66,21 +66,35 @@ class Transformer {
       `\r\nEnrollment Description: ${data.name}` +
       `\r\nDashboard Student Id: ${data.student_id}` +
       `\r\nDashboard Invoice id: ${data.id}` +
+      `\r\nDashboard URL: ${data.db_url}` +
       `\r\bImported from Dashboard`
     return publicNotes
   }
 
   createRefund (data) {
-    const CREDIT_CARD_OTHER = 13
+
     var source = {
       amount: -Math.abs(data.amount),
       invoice_id: data.invoice_public_id,
       payment_date: data.settled_at,
-      private_notes: data.reason + '\r\nBraintree Account: Collegeplus1',
-      payment_type_id: CREDIT_CARD_OTHER,
+      private_notes: data.reason + `\r\nDB Refund Id: ${data.id}` + `\r\nRefund Type: ${data.refund_type}` + '\r\nBraintree Account: Collegeplus1',
+      payment_type_id: this.refundType(data.refund_type),
       transaction_reference: data.transaction_id
     }
     return JSON.stringify(source)
+  }
+
+  refundType (refundType) {
+    const CREDIT_CARD_OTHER = 13
+    const CHECK = 16
+
+    if (refundType === 'credit_card') {
+      return CREDIT_CARD_OTHER
+    } else if (refundType === 'check') {
+      return CHECK
+    } else {
+      return ''
+    }
   }
 
   createPayment (data) {
@@ -94,6 +108,43 @@ class Transformer {
       transaction_reference: data.transaction_id
     }
     return JSON.stringify(source)
+  }
+
+  createCheck (data) {
+    const CHECK = 16
+    var check = {
+      amount: data.amount,
+      invoice_id: data.invoice_public_id,
+      payment_type_id: CHECK,
+      payment_date: data.created_at,
+      private_notes: `Check Entry from Dashboard. The transaction_reference is the check number.`,
+      transaction_reference: data.number
+    }
+    return JSON.stringify(check)
+  }
+
+  createCredit (data) {
+    var credit = {
+      amount: data.amount,
+      balance: data.amount,
+      credit_date: data.created_at,
+      client_id: data.client_public_id,
+      private_notes: `Dashboard ID: ${data.id} \r\n\ Reason: ${data.reason} \r\n Category: ${data.category}`
+    }
+    return JSON.stringify(credit)
+  }
+
+  createCreditPayment (data) {
+    const CREDIT_PAYMENT = 1
+    var creditPayment = {
+      amount: data.amount,
+      invoice_id: data.invoice_public_id,
+      payment_type_id: CREDIT_PAYMENT,
+      payment_date: data.created_at,
+      private_notes: 'Credit Memo applied to account from Dashboard.',
+      transaction_reference: data.id
+    }
+    return JSON.stringify(creditPayment)
   }
 
 }
