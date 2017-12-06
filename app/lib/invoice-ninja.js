@@ -225,6 +225,31 @@ class InvoiceNinja {
     })
   }
 
+
+  deleteInvoice (invoicePublicId, callback) {
+    var self = this
+    let options = {
+      uri: `${config.INVOICE_NINJA_API_URL}/api/v1/invoices/${invoicePublicId}`,
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Ninja-Token': config.INVOICE_NINJA_API_KEY
+      }
+    }
+
+    throttledRequest(options, function(err, res, body) {
+
+      if (res.statusCode !== 200 || res.statusCode == 'undefined') {
+        console.log(`Invoice was not deleted for ${invoicePublicId}`)
+        console.log(`Body of the request: ${body}`)
+        self.logIssues(options, err, res)
+      } else {
+        console.log(`Invoice ${invoicePublicId} was successfully deleted`)
+      }
+    })
+  }
+
+
   logIssues (requestOptions, err, res = null ) {
     var message = {
       request: requestOptions,

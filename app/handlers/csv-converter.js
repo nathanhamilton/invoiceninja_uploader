@@ -84,6 +84,14 @@ class CSVConverter {
       ninja.deleteCredit(data.id)
     })
   }
+
+  deleteInvoices (pathToInvoicesFile){
+    fs.createReadStream(pathToInvoicesFile)
+    .pipe(csvParse({separator: ','}))
+    .on('data', function(data) {
+      ninja.deleteInvoice(data.invoice_public_id)
+    })
+  }
 }
 
 export default new CSVConverter()

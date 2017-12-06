@@ -13,15 +13,15 @@ class Transformer {
       country: data.country,
       postal_code: data.zipcode,
       id_number: data.uid,
-      custom_value1: data.custom_value_client1,
-      custom_value2: data.custom_value_client2,
+      custom_value1: data.custom_value_client1, //company
+      custom_value2: data.custom_value_client2, //category
       contact: {
         first_name: data.first_name,
         last_name: data.last_name,
         email: data.email,
         phone: data.phone_number,
-        custom_value1: data.custom_value_contact1,
-        custom_value2: data.custom_value_contact2
+        custom_value1: data.custom_value_contact1, //channel
+        custom_value2: data.custom_value_contact2  //employee_id
       }
     }
     return JSON.stringify(source)
