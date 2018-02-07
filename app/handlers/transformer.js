@@ -1,7 +1,6 @@
 
 class Transformer {
 
-
   createClient (data) {
     var fullName = `${data.first_name} ${data.last_name}`
     var source = {
@@ -44,8 +43,6 @@ class Transformer {
       is_amount_discount: true,
       auto_bill: false,
       has_expenses: false,
-      custom_text_value1: data.chargify_id,
-      custom_text_value2: data.db_id,
       is_public: true,
       invoice_items: [
         {
@@ -61,15 +58,44 @@ class Transformer {
 
   addNotesData (data) {
     var publicNotes =
-      `Program ID: ${data.program_id}` +
-      `\r\nProgram Name: ${data.program_name}` +
-      `\r\nEnrollment Description: ${data.name}` +
-      `\r\nDashboard Student Id: ${data.student_id}` +
-      `\r\nDashboard Invoice id: ${data.id}` +
-      `\r\nDashboard URL: ${data.db_url}` +
-      `\r\bImported from Dashboard`
+      `Student Name: ${data.counseling_name}` +
+      `\r\nProduct Name: ${data.program_name}` +
+      `\r\nStudent UID: ${data.uid}` +
+      `\r\nEmployer: ${data.employer}` +
+      `\r\nEmployer Type: ${data.employer_type}` +
+      `\r\nImported from Salesforce`
     return publicNotes
   }
+
+  //`\r\nEnrollment Description: ${data.name}` +
+  // custom_text_value1: data.custom_text_value1,
+  //
+  //  addNotesData (data) {
+  //    var publicNotes =
+  //      `Client Name: ${data.name}` +
+  //      `\r\nClient UID: ${data.id_number}` +
+  //      `\r\nEmployee Category: ${data.employee_category}` +
+  //      `\r\nEmployee ID: ${data.employee_id}` +
+  //      `\r\nTransferred from individual client accounts`
+  //    return publicNotes
+  //  }
+
+  // custom_text_value2: data.invoice_public_id,
+  //
+
+  //custom_text_value2: data.db_id,
+  //
+  //addNotesData (data) {
+  //  var publicNotes =
+  //    `Program ID: ${data.program_id}` +
+  //    `\r\nProgram Name: ${data.program_name}` +
+  //    `\r\nEnrollment Description: ${data.name}` +
+  //    `\r\nDashboard Student Id: ${data.student_id}` +
+  //    `\r\nDashboard Invoice id: ${data.id}` +
+  //    `\r\nDashboard URL: ${data.db_url}` +
+  //    `\r\bImported from Dashboard`
+  //  return publicNotes
+  //}
 
   createRefund (data) {
 
@@ -77,13 +103,15 @@ class Transformer {
       amount: -Math.abs(data.amount),
       invoice_id: data.invoice_public_id,
       payment_date: data.settled_at,
-      private_notes: data.reason + `\r\nDB Refund Id: ${data.id}` + `\r\nRefund Type: ${data.refund_type}` + '\r\nBraintree Account: Collegeplus1',
+      private_notes: data.reason + `\r\nRefund Type: ${data.refund_type}`,
       payment_type_id: this.refundType(data.refund_type),
       transaction_reference: data.transaction_id
-    }
+    } 
     return JSON.stringify(source)
   }
 
+  //private_notes: data.reason + `\r\nRefund Type: ${data.refund_type}`,
+  
   refundType (refundType) {
     const CREDIT_CARD_OTHER = 13
     const CHECK = 16
@@ -104,7 +132,7 @@ class Transformer {
       invoice_id: data.invoice_public_id,
       payment_type_id: CREDIT_CARD_OTHER,
       payment_date: data.settled_at,
-      private_notes: 'Braintree Account: Collegeplus1',
+      private_notes: `Dashboard Payment ID ${data.id}` + "\r\nBraintree Account Collegeplus1" + `\r\nDashboard Invoice ID ${data.invoice_id}`,
       transaction_reference: data.transaction_id
     }
     return JSON.stringify(source)
@@ -117,34 +145,90 @@ class Transformer {
       invoice_id: data.invoice_public_id,
       payment_type_id: CHECK,
       payment_date: data.created_at,
-      private_notes: `Check Entry from Dashboard. The transaction_reference is the check number.`,
-      transaction_reference: data.number
+      private_notes: `Check Entry from EdCor Paperwork.`,
+      transaction_reference: data.id
     }
     return JSON.stringify(check)
   }
 
   createCredit (data) {
     var credit = {
-      amount: data.amount,
-      balance: data.amount,
-      credit_date: data.created_at,
+      amount: data.write_off_amount,
+      balance: data.write_off_amount,
+      credit_date: data.settled_at,
       client_id: data.client_public_id,
       private_notes: `Dashboard ID: ${data.id} \r\n\ Reason: ${data.reason} \r\n Category: ${data.category}`
     }
     return JSON.stringify(credit)
   }
 
+  // private_notes: `Reason: ${data.reason}`
+  // private_notes: `Dashboard ID: ${data.id} \r\n\ Reason: ${data.reason} \r\n Category: ${data.category}`
+
   createCreditPayment (data) {
     const CREDIT_PAYMENT = 1
     var creditPayment = {
-      amount: data.amount,
+      amount: data.write_off_amount,
       invoice_id: data.invoice_public_id,
       payment_type_id: CREDIT_PAYMENT,
-      payment_date: data.created_at,
-      private_notes: 'Credit Memo applied to account from Dashboard.',
+      payment_date: data.settled_at,
+      private_notes: data.reason,
       transaction_reference: data.id
     }
     return JSON.stringify(creditPayment)
+  }
+
+  addVoucherNotes (data) {
+    var publicNotes =
+      `Student Name: ${data.student_name}` +
+      `\r\nStudent UID: ${data.uid}` +
+      `\r\nStudent Identifier: ${data.student_identifier}` +
+      `\r\nInvoice Url: ${data.invoice_url}` +
+      `\r\nVoucher Number: ${data.voucher_number}` +
+      `\r\nVoucher URL: ${data.voucher_link}`
+    return publicNotes
+  }
+
+  createVoucherInvoice (data) {
+    var source = {
+      amount: data.total,
+      balance: data.total,
+      client_id: data.client_public_id,
+      invoice_status_id: 2,
+      discount: 0,
+      invoice_date: data.created_at,
+      due_date: data.created_at,
+      public_notes: this.addVoucherNotes(data),
+      invoice_type_id: 1,
+      is_recurring: false,
+      frequency_id: 1,
+      is_amount_discount: true,
+      auto_bill: false,
+      has_expenses: false,
+      custom_text_value1: '',
+      custom_text_value2: data.invoice_id,
+      is_public: true,
+      invoice_items: this.voucherInvoiceItems(data)
+    }
+    return JSON.stringify(source)
+  }
+
+  voucherInvoiceItems (data){
+    var itemsArray = []
+    for (var i=1; i<6; i++) {
+      var methodName = `course${i}_name`
+      var methodCost = `course${i}_cost`
+      if (data[methodName] != '') {
+        var hashObj = {
+          product_key: 'Course Voucher',
+          notes: data[methodName],
+          cost: data[methodCost],
+          qty: 1
+        }
+        itemsArray.push(hashObj)
+      }
+    }
+    return itemsArray
   }
 
 }

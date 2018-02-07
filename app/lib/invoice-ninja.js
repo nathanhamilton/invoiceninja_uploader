@@ -83,7 +83,7 @@ class InvoiceNinja {
     })
   }
 
-  createPayment (jsonPayment, callback) {
+  createPayment (jsonPayment, data, callback) {
     var self = this
     let options = {
       uri: `${config.INVOICE_NINJA_API_URL}/api/v1/payments`,
@@ -102,12 +102,12 @@ class InvoiceNinja {
         console.log(`Body of the request: ${body}`)
         self.logIssues(options, err, res)
       } else {
-        console.log('Payment successfully created.')
+        console.log(`Payment of id ${data.transaction_id} successfully created.`)
       }
     })
   }
 
-  createRefund (jsonRefund, callback) {
+  createRefund (jsonRefund, data, callback) {
     var self = this
     let options = {
       uri: `${config.INVOICE_NINJA_API_URL}/api/v1/payments`,
@@ -126,7 +126,7 @@ class InvoiceNinja {
         console.log(`Body of the request: ${body}`)
         self.logIssues(options, err, res)
       } else {
-        console.log('Refund successfully created.')
+        console.log(`Refund with ID ${data.transaction_id} successfully created.`)
       }
     })
   }
@@ -155,7 +155,7 @@ class InvoiceNinja {
     })
   }
 
-  createCredit (jsonCredit, callback) {
+  createCredit (jsonCredit, data, callback) {
     var self = this
     let options = {
       uri: `${config.INVOICE_NINJA_API_URL}/api/v1/credits`,
@@ -174,7 +174,7 @@ class InvoiceNinja {
         console.log(`Body of the request: ${body}`)
         self.logIssues(options, err, res)
       } else {
-        console.log('Credit successfully created.')
+        console.log(`Credit successfully created for client with id ${data.client_public_id}.`)
       }
     })
   }

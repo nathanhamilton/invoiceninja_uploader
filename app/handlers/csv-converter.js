@@ -29,7 +29,7 @@ class CSVConverter {
       .pipe(csvParse({separator: ','}))
       .on('data', function(data) {
         var createPayment = transformer.createPayment(data)
-        ninja.createPayment(createPayment)
+        ninja.createPayment(createPayment, data)
       })
   }
 
@@ -38,7 +38,7 @@ class CSVConverter {
       .pipe(csvParse({separator: ','}))
       .on('data', function(data) {
         var createRefund = transformer.createRefund(data)
-        ninja.createRefund(createRefund)
+        ninja.createRefund(createRefund, data)
       })
   }
 
@@ -56,7 +56,7 @@ class CSVConverter {
     .pipe(csvParse({separator: ','}))
     .on('data', function(data) {
       var credit = transformer.createCredit(data)
-      ninja.createCredit(credit)
+      ninja.createCredit(credit, data)
     })
   }
 
@@ -65,7 +65,7 @@ class CSVConverter {
     .pipe(csvParse({separator: ','}))
     .on('data', function(data) {
       var creditPayment = transformer.createCreditPayment(data)
-      ninja.createPayment(creditPayment)
+      ninja.createPayment(creditPayment, data)
     })
   }
 
@@ -73,7 +73,7 @@ class CSVConverter {
     fs.createReadStream(pathToPaymentsFile)
     .pipe(csvParse({separator: ','}))
     .on('data', function(data) {
-      ninja.deletePayment(data.id)
+      ninja.deletePayment(data.payment_public_id)
     })
   }
 
@@ -91,6 +91,15 @@ class CSVConverter {
     .on('data', function(data) {
       ninja.deleteInvoice(data.invoice_public_id)
     })
+  }
+
+  createVoucherInvoices (pathToInvoicesFile){
+    fs.createReadStream(pathToInvoicesFile)
+      .pipe(csvParse({separator: ','}))
+      .on('data', function(data) {
+        var convertInvoice = transformer.createVoucherInvoice(data)
+        ninja.createInvoice(convertInvoice)
+      })
   }
 }
 
