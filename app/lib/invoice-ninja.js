@@ -193,8 +193,9 @@ class InvoiceNinja {
     throttledRequest(options, function(err, res, body) {
 
       if (res.statusCode !== 200 || res.statusCode == 'undefined') {
-        console.log(`Credit was not created for ${paymentPublicId}`)
+        console.log(`Payment was not deleted with ID of ${paymentPublicId}`)
         console.log(`Body of the request: ${body}`)
+        console.log(`Request sent to the server: ${JSON.stringify(options)}`)
         self.logIssues(options, err, res)
       } else {
         console.log(`Payment ${paymentPublicId} was successfully deleted`)
