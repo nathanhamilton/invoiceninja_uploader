@@ -36,11 +36,12 @@ class Transformer {
       discount: 0,
       invoice_date: data.created_at,
       due_date: data.due_on,
-      public_notes: this.addNotesData(data),
+      public_notes: data.public_notes,
       invoice_type_id: 1,
       is_recurring: false,
       frequency_id: 1,
       is_amount_discount: true,
+      discount: data.discount,
       auto_bill: false,
       has_expenses: false,
       is_public: true,
@@ -106,12 +107,12 @@ class Transformer {
       private_notes: data.reason + `\r\nRefund Type: ${data.refund_type}`,
       payment_type_id: this.refundType(data.refund_type),
       transaction_reference: data.transaction_id
-    } 
+    }
     return JSON.stringify(source)
   }
 
   //private_notes: data.reason + `\r\nRefund Type: ${data.refund_type}`,
-  
+
   refundType (refundType) {
     const CREDIT_CARD_OTHER = 13
     const CHECK = 16
@@ -132,11 +133,13 @@ class Transformer {
       invoice_id: data.invoice_public_id,
       payment_type_id: CREDIT_CARD_OTHER,
       payment_date: data.settled_at,
-      private_notes: `Dashboard Payment ID ${data.id}` + "\r\nBraintree Account Collegeplus1" + `\r\nDashboard Invoice ID ${data.invoice_id}`,
+      private_notes: `Imported from Shopify transactions. Exact transaction number not known`,
       transaction_reference: data.transaction_id
     }
     return JSON.stringify(source)
   }
+
+  // private_notes: `Dashboard Payment ID ${data.id}` + "\r\nBraintree Account Collegeplus1" + `\r\nDashboard Invoice ID ${data.invoice_id}`,
 
   createCheck (data) {
     const CHECK = 16
@@ -157,7 +160,7 @@ class Transformer {
       balance: data.write_off_amount,
       credit_date: data.settled_at,
       client_id: data.client_public_id,
-      private_notes: `Dashboard ID: ${data.id} \r\n\ Reason: ${data.reason} \r\n Category: ${data.category}`
+      private_notes: `Check Number: ${data.transaction_id} \r\n\ Reason: ${data.reason} \r\n Category: ${data.category}`
     }
     return JSON.stringify(credit)
   }
@@ -173,7 +176,7 @@ class Transformer {
       payment_type_id: CREDIT_PAYMENT,
       payment_date: data.settled_at,
       private_notes: data.reason,
-      transaction_reference: data.id
+      transaction_reference: data.transaction_id
     }
     return JSON.stringify(creditPayment)
   }
@@ -213,7 +216,7 @@ class Transformer {
     return JSON.stringify(source)
   }
 
-  voucherInvoiceItems (data){
+  voucherInvoiceItems (data) {
     var itemsArray = []
     for (var i=1; i<6; i++) {
       var methodName = `course${i}_name`
@@ -231,6 +234,28 @@ class Transformer {
     return itemsArray
   }
 
+  updateInvoiceParams (data) {
+    var source = {
+      invoice_public_id: data.invoice_public_id,
+      amount: data.amount,
+      balance: data.balance,
+      cost: data.cost,
+      discount: data.discount
+    }
+    return JSON.stringify(source)
+  }
+
+  updateInvoice (rawData, updateParams) {
+    let payload = JSON.parse(rawData).data
+    let params = JSON.parse(updateParams)
+
+    payload.amount = params.amount
+    payload.balance = params.balance
+    payload.invoice_items[0].cost = params.cost
+    payload.discount = params.discount
+
+    return JSON.stringify(payload)
+  }
 }
 
 export default new Transformer()

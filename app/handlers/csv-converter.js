@@ -101,6 +101,15 @@ class CSVConverter {
         ninja.createInvoice(convertInvoice)
       })
   }
+
+  updateInvoice (pathToInvoicesFile){
+    fs.createReadStream(pathToInvoicesFile)
+      .pipe(csvParse({separator: ','}))
+      .on('data', function(data) {
+        var updateParams = transformer.updateInvoiceParams(data)
+        ninja.getInvoiceByPublicId(data.invoice_public_id, updateParams)
+      })
+  }
 }
 
 export default new CSVConverter()
