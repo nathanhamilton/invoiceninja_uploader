@@ -25,22 +25,22 @@
   },
   "homepage": "https://github.com/nathanhamilton/invoiceninja_uploader#readme",
   "dependencies": {
-    "csv-parser": "^1.2.2",
-    "dotenv": "^2.0.0",
-    "mysql": "^2.15.0",
+    "ajv": "^6.10.0",
+    "csv-parser": "^2.2.0",
+    "dotenv": "^7.0.0",
+    "mysql": "^2.16.0",
     "prompt": "^1.0.0",
     "request": "^2.88.0",
     "slow-stream": "0.0.4",
     "throttled-request": "^0.1.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
-    "babel-preset-es2015": "^6.24.0",
+    "babel-preset-es2015": "^6.24.1",
     "babel-register": "^6.26.0",
-    "standard": "^7.1.2"
+    "standard": "^12.0.1"
   },
   "engines": {
-    "node": "6.9.1"
+    "node": "11.12.0"
   }
 }
